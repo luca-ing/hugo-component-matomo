@@ -1,4 +1,4 @@
-.MatomoOptout-message--track.is-hidden,
-.MatomoOptout-message--block.is-hidden {
-  display: none;
+/* Site styles often give buttons a display value, which would beat the plain hidden attribute. */
+.MatomoOptout [hidden] {
+  display: none !important;
 }

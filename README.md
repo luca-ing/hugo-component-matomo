@@ -1,18 +1,22 @@
 ## About
 
-[Matomo](https://matomo.org/) tracking and optout scripts for [Hugo](https://gohugo.io).
+[Matomo](https://matomo.org/) tracking and opt-out for [Hugo](https://gohugo.io), without cookies and without a consent banner.
+
+Fork of [holehan/hugo-component-matomo](https://github.com/holehan/hugo-component-matomo). It differs from upstream in how opt-out works:
+
+- Matomo is not loaded at all if the browser sends [Global Privacy Control](https://globalprivacycontrol.org/) or Do Not Track.
+- The opt-out shortcode stores a single `localStorage` flag on the site's own domain, and only when the visitor clicks it. The tracking script checks the flag before loading Matomo. No Matomo plugin and no third-party cookie are needed, and nothing is stored for visitors who never opt out.
+- No polyfills and no build step: the scripts in `assets/js` are the source.
 
 ## Requirements
 
 - [Hugo](https://gohugo.io) extended v0.120.0 or higher
-- [Matomo Analytics](https://matomo.org/) with marketplace/plugin access
-- Matomo plugin [Ajax Opt Out](https://plugins.matomo.org/AjaxOptOut)
-- A modern webbrowser with JS and [Promises](https://caniuse.com/#feat=promises) support. Although not modern, IE11 (IE10 even?) is supported with the [es6-promise polyfill](https://github.com/stefanpenner/es6-promise).
+- [Matomo Analytics](https://matomo.org/)
 
 ## Install component as a submodule
 
 ```sh
-git submodule add https://github.com/holehan/hugo-components-matomo.git themes/matomo
+git submodule add https://github.com/luca-ing/hugo-component-matomo.git themes/matomo
 ```
 
 ### Update component
@@ -35,7 +39,7 @@ git submodule update --remote themes/matomo
   {{ partial "matomo-tracking" . }}
   ```
 
-- Add the optout shortcode to your privacy page
+- Add the opt-out shortcode to your privacy page
 
   ```markdown
   {{< matomo-optout >}}
@@ -51,6 +55,8 @@ url = "https://example.org"
 id = 1
 ```
 
+The tracker runs with `disableCookies`. Pages may push their own events into `window._paq`; when tracking is off, the queue is a plain array nobody reads.
+
 The scripts and styles are fingerprinted, and [SRI](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) is applied by default. If you want to disable SRI (e.g. in case your webhoster optimzes your assets automagically), add the following to your matomo config in `config.toml`:
 
 ```toml
@@ -58,67 +64,40 @@ The scripts and styles are fingerprinted, and [SRI](https://developer.mozilla.or
 disableSRI = true
 ```
 
-### Configure optout
+### Configure opt-out
 
-Customize the optout message and button text by adding the following to your `config.toml`. The message text supports markdown, the button text does not.
+Customize the opt-out messages and button texts by adding the following to your `config.toml`. Message texts support markdown, button texts do not. `signal` is shown instead of the buttons when the browser sends Global Privacy Control or Do Not Track; `noscript` when JavaScript is off.
 
 ```toml
 [params.matomo.track]
-button = "Datenerhebung zulassen"
-message = "Ihre Sitzungsdaten werden erhoben."
+button = "Wieder erfassen"
+message = "Ihr Besuch wird gezählt."
 [params.matomo.block]
-button = "Datenerhebung abstellen"
-message = "Ihre Sitzungsdaten werden *nicht* erhoben."
+button = "Nicht mehr erfassen"
+message = "Sie haben widersprochen, Ihre Besuche werden *nicht* gezählt."
+[params.matomo.signal]
+message = "Ihr Browser sendet ein Do-not-track-Signal, Ihre Besuche werden *nicht* gezählt."
+[params.matomo.noscript]
+message = "JavaScript ist abgeschaltet, Ihre Besuche werden *nicht* gezählt."
 ```
 
-Alternatively use the page's frontmatter to customize the optout message and button text. The message text supports markdown, the button text does not.
+The same keys work in a page's front matter, under `matomo:`.
 
-```yaml
-matomo:
-  track:
-    button: Allow tracking
-    message: You are being watched. The government has a secret system, a machine that spies on you every hour of every day.
-  block:
-    button: Disallow tracking
-    message: You are **not** tracked.
-```
+### Style the opt-out component
 
-### Style the Matomo Optout component
-
-The generated HTML will look like below.
+The generated HTML looks like this; the script unhides the message and button that match the current state.
 
 ```html
 <div class="MatomoOptout">
+  <link rel="stylesheet" ...>
   <script ...></script>
-  <div class="MatomoOptout-message MatomoOptout-message--track is-hidden">
-    You are being watched.
-  </div>
-  <div class="MatomoOptout-message MatomoOptout-message--block">
-    You are not tracked.
-  </div>
-  <button class="MatomoOptout-button MatomoOptout-button--track">
-    Allow tracking
-  </button>
-  <button class="MatomoOptout-button MatomoOptout-button--block">
-    Disable tracking
-  </button>
+  <div class="MatomoOptout-message MatomoOptout-message--track" hidden>...</div>
+  <div class="MatomoOptout-message MatomoOptout-message--block" hidden>...</div>
+  <div class="MatomoOptout-message MatomoOptout-message--signal" hidden>...</div>
+  <noscript>...</noscript>
+  <button type="button" class="MatomoOptout-button MatomoOptout-button--block" hidden>Opt out</button>
+  <button type="button" class="MatomoOptout-button MatomoOptout-button--track" hidden>Opt back in</button>
 </div>
 ```
 
-The matomo component comes with a very limited set of css styles that toggles between the messages. The style file is located at `themes/matomo/assets/css/matomo-optout.css`. If you want to use your own style file, create a file called `assets/css/matomo-optout.css` in your Hugo project's or your theme's root folder. Hugo will then pick this file instead of the one shipped with the matomo component.
-
-In case you want to use your own build pipeline, set `styleFromAssets = false` within `[params.matomo]`. It's up to you then to add the css styles to one of your own style files.
-
-Use the following classes to style the optout component to your heart's desire.
-
-```css
-MatomoOptout
-MatomoOptout-message
-MatomoOptout-message--track
-MatomoOptout-message--track.is-hidden
-MatomoOptout-message--block
-MatomoOptout-message--block.is-hidden
-MatomoOptout-button
-MatomoOptout-button--track
-MatomoOptout-button--block
-```
+The shipped style file, `assets/css/matomo-optout.css`, only makes sure `hidden` wins over site button styles. To replace it, create `assets/css/matomo-optout.css` in your Hugo project or theme. To leave styling to your own pipeline, set `styleFromAssets = false` within `[params.matomo]`; your styles must then hide `.MatomoOptout [hidden]`.

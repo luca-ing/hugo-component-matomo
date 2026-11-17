@@ -1,8 +1,8 @@
 name = "Matomo Components"
 license = "MIT"
-licenselink = "https://github.com/holehan/hugo-component-matomo/blob/master/LICENSE"
-description = "Hugo components for Matomo Analytics"
-homepage = "https://github.com/holehan/hugo-component-matomo"
+licenselink = "https://github.com/luca-ing/hugo-component-matomo/blob/master/LICENSE"
+description = "Hugo components for cookieless Matomo Analytics with a lightweight opt-out"
+homepage = "https://github.com/luca-ing/hugo-component-matomo"
 tags = ["Matomo", "Piwik", "analytics", "tracking", "GDPR", "DSGVO"]
 min_version = "0.43"
 

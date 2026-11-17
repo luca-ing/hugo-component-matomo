@@ -1,26 +1,16 @@
+{{- $script := slice (resources.Get "js/matomo-privacy.js") (resources.Get "js/matomo-optout.js") | resources.Concat "js/matomo-optout.bundle.js" -}}
+{{- $style := resources.Get "css/matomo-optout.css" -}}
+{{- $sri := and (not hugo.IsServer) (not $.Site.Params.matomo.disableSRI) -}}
+{{- if not hugo.IsServer }}{{ $script = $script | minify | fingerprint }}{{ $style = $style | minify | fingerprint }}{{ end -}}
 <div class="MatomoOptout">
-{{- $es6Promise := resources.Get "js/es6-promise.auto.min.js" | fingerprint -}}
-{{- $promisePolyfill := resources.Get "js/promise-polyfill.js" | minify | fingerprint -}}
-{{- $fetchJsonp := resources.Get "js/fetch-jsonp.js" -}}
-{{ $matomoOptout := resources.Get "js/matomo-optout.js" }}
-<script data-id="promise-polyfill" data-promise-polyfill-url="{{ $es6Promise.RelPermalink }}" src="{{ $promisePolyfill.RelPermalink }}" {{ if not $.Site.Params.matomo.disableSRI }}integrity="{{ $promisePolyfill.Data.Integrity }}" crossorigin="anonymous"{{ end }} defer></script>
-{{- if hugo.IsServer -}}
-{{ $matomoOptoutBundle := slice $fetchJsonp $matomoOptout | resources.Concat "js/matomo-optout.js" }}
-<script data-id="matomo-optout" data-matomo-optout-url="{{ $.Site.Params.matomo.url }}" src="{{ $matomoOptoutBundle.RelPermalink }}" defer></script>
-{{- if ne $.Site.Params.matomo.stylefromassets false -}}
-{{ $matomoStyle := resources.Get "css/matomo-optout.css" }}
-<link rel="stylesheet" href="{{ $matomoStyle.RelPermalink }}">
-{{- end -}}
-{{- else -}}
-{{ $matomoOptoutBundle := slice $fetchJsonp $matomoOptout | resources.Concat "js/matomo-optout.js" | minify | fingerprint }}
-<script data-id="matomo-optout" data-matomo-optout-url="{{ $.Site.Params.matomo.url }}" src="{{ $matomoOptoutBundle.RelPermalink }}" {{ if not $.Site.Params.matomo.disableSRI }}integrity="{{ $matomoOptoutBundle.Data.Integrity }}" crossorigin="anonymous"{{ end }} defer></script>
-{{- if ne $.Site.Params.matomo.stylefromassets false -}}
-{{ $matomoStyle := resources.Get "css/matomo-optout.css" | minify | fingerprint }}
-<link rel="stylesheet" href="{{ $matomoStyle.RelPermalink }}" {{ if not $.Site.Params.matomo.disableSRI }}integrity="{{ $matomoStyle.Data.Integrity }}" crossorigin="anonymous"{{ end }}>
-{{- end -}}
-{{ end }}
-<div class="MatomoOptout-message MatomoOptout-message--track is-hidden">{{ $.Page.Param "matomo.track.message" | default "You are being watched." | markdownify }}</div>
-<div class="MatomoOptout-message MatomoOptout-message--block">{{ $.Page.Param "matomo.block.message" | default "You are not tracked." | markdownify }}</div>
-<button class="MatomoOptout-button MatomoOptout-button--track">{{ $.Page.Param "matomo.track.button" | default "Allow tracking"}}</button> 
-<button class="MatomoOptout-button MatomoOptout-button--block">{{ $.Page.Param "matomo.block.button" | default "Disable tracking"}}</button>
+{{- if ne $.Site.Params.matomo.styleFromAssets false }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}"{{ if $sri }} integrity="{{ $style.Data.Integrity }}" crossorigin="anonymous"{{ end }}>
+{{- end }}
+<script src="{{ $script.RelPermalink }}"{{ if $sri }} integrity="{{ $script.Data.Integrity }}" crossorigin="anonymous"{{ end }} defer></script>
+<div class="MatomoOptout-message MatomoOptout-message--track" hidden>{{ $.Page.Param "matomo.track.message" | default "Your visit is counted." | markdownify }}</div>
+<div class="MatomoOptout-message MatomoOptout-message--block" hidden>{{ $.Page.Param "matomo.block.message" | default "You opted out, so your visits are not counted." | markdownify }}</div>
+<div class="MatomoOptout-message MatomoOptout-message--signal" hidden>{{ $.Page.Param "matomo.signal.message" | default "Your browser sends a do-not-track signal, so your visits are not counted." | markdownify }}</div>
+<noscript>{{ $.Page.Param "matomo.noscript.message" | default "JavaScript is off, so your visits are not counted." | markdownify }}</noscript>
+<button type="button" class="MatomoOptout-button MatomoOptout-button--block" hidden>{{ $.Page.Param "matomo.block.button" | default "Opt out" }}</button>
+<button type="button" class="MatomoOptout-button MatomoOptout-button--track" hidden>{{ $.Page.Param "matomo.track.button" | default "Opt back in" }}</button>
 </div>
