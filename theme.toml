@@ -4,7 +4,7 @@ licenselink = "https://github.com/luca-ing/hugo-component-matomo/blob/master/LIC
 description = "Hugo components for cookieless Matomo Analytics with a lightweight opt-out"
 homepage = "https://github.com/luca-ing/hugo-component-matomo"
 tags = ["Matomo", "Piwik", "analytics", "tracking", "GDPR", "DSGVO"]
-min_version = "0.43"
+min_version = "0.120.0"
 
 [author]
   name = "Florian Grässle"

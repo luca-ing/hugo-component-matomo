@@ -10,6 +10,7 @@
 <div class="MatomoOptout-message MatomoOptout-message--track" hidden>{{ $.Page.Param "matomo.track.message" | default "Your visit is counted." | markdownify }}</div>
 <div class="MatomoOptout-message MatomoOptout-message--block" hidden>{{ $.Page.Param "matomo.block.message" | default "You opted out, so your visits are not counted." | markdownify }}</div>
 <div class="MatomoOptout-message MatomoOptout-message--signal" hidden>{{ $.Page.Param "matomo.signal.message" | default "Your browser sends a do-not-track signal, so your visits are not counted." | markdownify }}</div>
+<div class="MatomoOptout-message MatomoOptout-message--nostorage" hidden>{{ $.Page.Param "matomo.nostorage.message" | default "Your browser does not let this site store anything, so your objection cannot be remembered. Turn on Global Privacy Control or Do Not Track instead." | markdownify }}</div>
 <noscript>{{ $.Page.Param "matomo.noscript.message" | default "JavaScript is off, so your visits are not counted." | markdownify }}</noscript>
 <button type="button" class="MatomoOptout-button MatomoOptout-button--block" hidden>{{ $.Page.Param "matomo.block.button" | default "Opt out" }}</button>
 <button type="button" class="MatomoOptout-button MatomoOptout-button--track" hidden>{{ $.Page.Param "matomo.track.button" | default "Opt back in" }}</button>

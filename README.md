@@ -66,7 +66,7 @@ disableSRI = true
 
 ### Configure opt-out
 
-Customize the opt-out messages and button texts by adding the following to your `config.toml`. Message texts support markdown, button texts do not. `signal` is shown instead of the buttons when the browser sends Global Privacy Control or Do Not Track; `noscript` when JavaScript is off.
+Customize the opt-out messages and button texts by adding the following to your `config.toml`. Message texts support markdown, button texts do not. `signal` is shown instead of the buttons when the browser sends Global Privacy Control or Do Not Track; `noscript` when JavaScript is off; `nostorage` when the browser refuses to store the opt-out.
 
 ```toml
 [params.matomo.track]
@@ -79,6 +79,8 @@ message = "Sie haben widersprochen, Ihre Besuche werden *nicht* gezählt."
 message = "Ihr Browser sendet ein Do-not-track-Signal, Ihre Besuche werden *nicht* gezählt."
 [params.matomo.noscript]
 message = "JavaScript ist abgeschaltet, Ihre Besuche werden *nicht* gezählt."
+[params.matomo.nostorage]
+message = "Ihr Browser erlaubt dieser Website keinen Speicher, deshalb lässt sich Ihr Widerspruch nicht merken. Schalten Sie stattdessen „Global Privacy Control“ oder „Do Not Track“ ein."
 ```
 
 The same keys work in a page's front matter, under `matomo:`.
@@ -94,6 +96,7 @@ The generated HTML looks like this; the script unhides the message and button th
   <div class="MatomoOptout-message MatomoOptout-message--track" hidden>...</div>
   <div class="MatomoOptout-message MatomoOptout-message--block" hidden>...</div>
   <div class="MatomoOptout-message MatomoOptout-message--signal" hidden>...</div>
+  <div class="MatomoOptout-message MatomoOptout-message--nostorage" hidden>...</div>
   <noscript>...</noscript>
   <button type="button" class="MatomoOptout-button MatomoOptout-button--block" hidden>Opt out</button>
   <button type="button" class="MatomoOptout-button MatomoOptout-button--track" hidden>Opt back in</button>

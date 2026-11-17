@@ -17,7 +17,11 @@ function matomoOptOutInit() {
   if (!root) return;
 
   root.querySelector('.MatomoOptout-button--block').addEventListener('click', function () {
-    matomoSetOptOut(true);
+    if (!matomoSetOptOut(true)) {
+      /* Storage refused: the opt-out cannot be remembered, so say so instead of silently failing. */
+      root.querySelector('.MatomoOptout-message--nostorage').hidden = false;
+      return;
+    }
     matomoOptOutRender(root);
   });
   root.querySelector('.MatomoOptout-button--track').addEventListener('click', function () {
