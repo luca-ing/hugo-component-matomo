@@ -22,7 +22,9 @@ function matomoOptOutInit() {
       root.querySelector('.MatomoOptout-message--nostorage').hidden = false;
       return;
     }
-    matomoOptOutRender(root);
+    /* The tracker loaded with this page keeps sending events until it is gone, and Matomo cannot
+       be told to stop without a cookie. A reload brings the page back without it. */
+    location.reload();
   });
   root.querySelector('.MatomoOptout-button--track').addEventListener('click', function () {
     matomoSetOptOut(false);

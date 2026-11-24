@@ -5,7 +5,7 @@
 Fork of [holehan/hugo-component-matomo](https://github.com/holehan/hugo-component-matomo). It differs from upstream in how opt-out works:
 
 - Matomo is not loaded at all if the browser sends [Global Privacy Control](https://globalprivacycontrol.org/) or Do Not Track.
-- The opt-out shortcode stores a single `localStorage` flag on the site's own domain, and only when the visitor clicks it. The tracking script checks the flag before loading Matomo. No Matomo plugin and no third-party cookie are needed, and nothing is stored for visitors who never opt out.
+- The opt-out shortcode stores a single `localStorage` flag on the site's own domain, and only when the visitor clicks it. The tracking script checks the flag before loading Matomo, and opting out reloads the page so the tracker already running stops too. No Matomo plugin and no third-party cookie are needed, and nothing is stored for visitors who never opt out.
 - No polyfills and no build step: the scripts in `assets/js` are the source.
 
 ## Requirements
